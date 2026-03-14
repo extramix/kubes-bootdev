@@ -1,6 +1,7 @@
 # Variables
 DEPLOYMENT_FILE=deployment.yml
-APP_NAME=my-app
+APP_NAME=synergychat-web
+PORT=8080
 
 .PHONY: up down status proxy
 
@@ -10,6 +11,16 @@ up:
 	@kubectl apply -f $(DEPLOYMENT_FILE)
 	@echo "Deployment applied. Waiting for pods to be ready..."
 	@kubectl rollout status deployment/$(APP_NAME)
+
+# Open the dashboard
+dashboard:
+	@echo "Starting dashboard on port 63840..."
+	@minikube dashboard --port=63840
+
+# Port-forward to the deployment
+forward:
+	@echo "Forwarding $(APP_NAME) to http://localhost:$(PORT)..."
+	@kubectl port-forward deployment/$(APP_NAME) $(PORT):$(PORT)
 
 # Stop the proxy and delete the deployment
 down:
